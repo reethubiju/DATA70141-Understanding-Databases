@@ -1,0 +1,76 @@
+-- NAME: REETHU BIJU
+-- USER ID: 11340063
+
+
+DROP TABLE IF EXISTS Audit_Trail;
+DROP TABLE IF EXISTS Ownership;
+DROP TABLE IF EXISTS Bank;
+DROP TABLE IF EXISTS Player;
+DROP TABLE IF EXISTS Location;
+DROP TABLE IF EXISTS Bonus;
+DROP TABLE IF EXISTS Property;
+
+CREATE TABLE Property (
+	Name VARCHAR(30) NOT NULL,
+	Cost INT NOT NULL,
+	Colour VARCHAR(20) NOT NULL,
+	PRIMARY KEY(Name)
+	);
+
+CREATE TABLE Bonus (
+	Bonus_ID INT NOT NULL,
+	Name VARCHAR(30) NOT NULL,
+	Amount INT DEFAULT 0,
+	isPay INT DEFAULT 0 CHECK (isPay IN (0,1,2)),
+	Forward INT DEFAULT 0,
+	PRIMARY KEY(Bonus_ID)
+	);
+
+CREATE TABLE Location (
+	Loc_ID INT NOT NULL,
+	Property_Name VARCHAR(30),
+	Bonus_ID INT,
+	PRIMARY KEY(Loc_ID),
+	FOREIGN KEY(Property_Name) REFERENCES Property(Name),
+	FOREIGN KEY(Bonus_ID) REFERENCES Bonus(Bonus_ID)
+	);
+
+CREATE TABLE Player (
+	Player_ID INT NOT NULL,
+	Name VARCHAR(30) NOT NULL,
+	Token VARCHAR(30) NOT NULL UNIQUE,
+	Round INT NOT NULL,
+	Current_Loc INT NOT NULL,
+	Bonus_Owned INT,
+	PRIMARY KEY(Player_ID)
+	FOREIGN KEY(Current_Loc) REFERENCES Location(Loc_ID),
+	FOREIGN KEY(Bonus_Owned) REFERENCES Bonus(Bonus_ID)
+	);
+	
+CREATE TABLE Bank (
+	Player_ID INT NOT NULL,
+	Balance INT NOT NULL,
+	FOREIGN KEY(Player_ID) REFERENCES Player(Player_ID)
+	);
+
+CREATE TABLE Ownership (
+	Player_ID INT NOT NULL,
+	Property_Name VARCHAR(30) NOT NULL,
+	FOREIGN KEY(Player_ID) REFERENCES Player(Player_ID),
+	FOREIGN KEY(Property_Name) REFERENCES Property(Name)
+	);
+
+CREATE TABLE Audit_Trail (
+	Player_ID INT NOT NULL,
+	Name VARCHAR(30) NOT NULL,
+	Token VARCHAR(30) NOT NULL,
+	Round INT NOT NULL,
+	Balance INT NOT NULL,
+	Current_Loc INT NOT NULL
+	);
+
+
+
+
+
+
